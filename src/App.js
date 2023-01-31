@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
 import { DebugLayerMaterial, LayerMaterial, Base, Depth, Noise } from "lamina"
 import {
@@ -14,24 +14,7 @@ import "./App.css"
 export default function App() {
   return (
     <Canvas camera={{ position: [0, 0, 4], fov: 50 }}>
-      <Environment background resolution={64}>
-        <mesh scale={100}>
-          <sphereGeometry args={[1, 64, 64]} />
-          <DebugLayerMaterial color="#ffffff">
-            <Depth
-              colorA="#810000" //
-              colorB="#ffd0d0"
-              alpha={0.5}
-              mode="multiply"
-              near={0}
-              far={2}
-              origin={[1, 1, 1]}
-            />
-          </DebugLayerMaterial>
-        </mesh>
-      </Environment>
-
-      <ambientLight intensity={0.5} />
+      <ambientLight intensity={15} />
 
       <PresentationControls
         global
@@ -49,6 +32,7 @@ export default function App() {
 function Jamesledger(props) {
   const ref = useRef()
   const { nodes } = useGLTF("/james.glb")
+  const [hovered, hover] = useState(false)
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime()
@@ -59,26 +43,22 @@ function Jamesledger(props) {
   })
 
   return (
-    <group ref={ref} {...props} dispose={null}>
-      <mesh geometry={nodes.Text.geometry} scale={0.8}>
-        <MeshDistortMaterial distort={0.15} speed={3} />
-      </mesh>
-    </group>
+    <mesh
+      {...props}
+      ref={ref}
+      geometry={nodes.Text.geometry}
+      scale={0.8}
+      onPointerOver={(event) => hover(true)}
+      onPointerOut={(event) => hover(false)}
+      onClick={(event) =>
+        (window.location.href = "https://www.linkedin.com/in/jamesledger/")
+      }>
+      <MeshDistortMaterial
+        distort={0.3}
+        speed={hovered ? 30 : 2}
+        color={hovered ? "darkred" : "#023020"}
+        roughness={1}
+      />
+    </mesh>
   )
-}
-
-function Links(props) {
-  const data = [
-    { key: "linkedin", link: "linkedin" },
-    { key: "github", link: "github" },
-  ]
-  const links = data.map((l) => (
-    <h1>
-      <a key={l.key} href={l.link}>
-        {l.name}
-      </a>
-    </h1>
-  ))
-
-  return <Html>{links}</Html>
 }
