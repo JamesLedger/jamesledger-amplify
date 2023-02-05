@@ -31,7 +31,7 @@ export default function App() {
 
 function Jamesledger(props) {
   const ref = useRef()
-  const { nodes } = useGLTF("james.gltf")
+  const { nodes } = useGLTF("models/james.glb")
   const [hovered, hover] = useState(false)
 
   useFrame((state) => {
